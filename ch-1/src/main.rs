@@ -71,4 +71,7 @@ fn main() {
             }
         }
     }
+
+    let generation2 = generation(world);
+    generations += 1;
 }
