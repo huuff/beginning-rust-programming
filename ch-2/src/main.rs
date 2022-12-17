@@ -125,6 +125,9 @@ fn populate_from_file(filename: String) -> [[u8; 100]; 100] {
     }
 
     for (x, y) in pairs {
+        if x > 99 || y > 99 {
+            panic!("The provided pair {x}, {y} exceeds the grid bounds");
+        }
         new_world[x][y] = 1;
     }
     new_world
