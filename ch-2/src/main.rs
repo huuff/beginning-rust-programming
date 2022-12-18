@@ -2,7 +2,7 @@ extern crate rand;
 extern crate termion;
 use std::{env, thread, time};
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{self, BufRead, BufReader, Write};
 use termion::clear;
 use termion::color;
 
@@ -94,7 +94,7 @@ fn main() {
         world = temp;
         generations += 1;
         println!("{}", clear::All);
-        display_world(world);
+        display_world(world, &mut io::stdout());
         println!(
             "{blue}Population at generation {g} is {c}",
             blue = color::Fg(color::Blue),
@@ -103,6 +103,7 @@ fn main() {
         );
         thread::sleep(time::Duration::from_secs(2));
     }
+
 
 }
 
@@ -135,15 +136,15 @@ fn populate_from_file(filename: String) -> [[u8; 75]; 75] {
     new_world
 }
 
-fn display_world(world: [[u8; 75]; 75]) {
+fn display_world(world: [[u8; 75]; 75], output: &mut impl Write) {
     for i in 0..74 {
         for j in 0..74 {
             if world[i][j] == 1 {
-                print!("{red}*", red = color::Fg(color::Red));
+                output.write(format!("{red}*", red = color::Fg(color::Red)).as_bytes()).unwrap();
             } else {
-                print!(" ");
+                output.write(" ".as_bytes()).unwrap();
             }
         }
-        println!("");
+        output.write("\n".as_bytes()).unwrap();
     }
 }
