@@ -100,6 +100,7 @@ fn main() {
         "right leg".to_string(),
         "left foot".to_string(),
         "right foot".to_string(),
+        "hat".to_string(),
     ];
 
     let mut body_iter = body.iter();
@@ -125,7 +126,7 @@ fn main() {
                 } else {
                     let next_part = body_iter.next().unwrap();
                     println!("Incorrect! You're at {}", next_part);
-                    if next_part == "right foot" {
+                    if next_part == "hat" {
                         body_complete = true;
                     }
                 }
