@@ -37,6 +37,8 @@ fn read_file(filename: &fs::DirEntry) -> Result<String, ()> {
 
 fn main() -> Result<(), ()> {
     let current_dir = String::from(env::current_dir().unwrap().to_str().unwrap());
+    let target_dir = env::args().nth(1).unwrap_or(current_dir);
+
     let (mut side1, mut side2) = match UnixStream::pair() {
         Ok((side1, side2)) => (side1, side2),
         Err(e) => {
@@ -45,7 +47,7 @@ fn main() -> Result<(), ()> {
         }
     };
     let serv_handle = thread::spawn(|| { sock_server(side1)});
-    for file in get_files(&current_dir) {
+    for file in get_files(&target_dir) {
         let entry = file.unwrap();
         if let Ok(file) = read_file(&entry) {
             let msg = format!("{}: {:x}\n", entry.path().to_str().unwrap(), Sha256::digest(file.as_bytes()));
