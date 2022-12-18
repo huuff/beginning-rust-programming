@@ -7,6 +7,7 @@ struct Dvd {
     year: u16,
     cast: String,
     length: u16,
+    director: String,
 }
 
 impl ToJson for Dvd {
@@ -25,6 +26,7 @@ fn main() {
         year: 1994,
         cast: String::from("Hugh Grant"),
         length: 117,
+        director: String::from("Mike Newell"),
     };
 
     let encoded = convert_to_json(&a);
