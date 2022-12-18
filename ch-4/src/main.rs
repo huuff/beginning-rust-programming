@@ -58,8 +58,10 @@ impl CheckLetter for Word {
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>> where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+    match File::open(filename) {
+        Ok(file) => Ok(io::BufReader::new(file).lines()),
+        Err(_) => panic!("File not found")
+    }
 }
 
 fn read_list(filename: String) -> Vec<String> {
