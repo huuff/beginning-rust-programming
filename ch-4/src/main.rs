@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use rand::Rng;
+use std::env;
 
 struct Word {
     answer: String,
@@ -79,7 +80,7 @@ fn read_list(filename: String) -> Vec<String> {
 
 fn select_word() -> String {
     let mut rng = rand::thread_rng();
-    let filename = "words.txt".to_string();
+    let filename = env::args().nth(1).unwrap_or("words.txt".to_string());
     let words = read_list(filename);
     let word_count = words.len();
     let selection = rng.gen_range(1..word_count);
