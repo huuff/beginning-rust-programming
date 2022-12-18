@@ -3,6 +3,7 @@ extern crate rand;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
+use std::process::exit;
 use rand::Rng;
 use std::env;
 
@@ -120,6 +121,15 @@ fn main() {
         let mut input = String::new();
         match io::stdin().read_line(&mut input) {
             Ok(n) => {
+                // If the input is 4 characters or longer, check wether it's the answer
+                if input.len() >= 4 {
+                    let trimmed_input = input.trim();
+                    if trimmed_input == answer.answer {
+                        println!("Correct! The answer is {}", &answer.answer);
+                        exit(0);
+                    }
+                }
+
                 letter = input.chars().nth(0).unwrap();
                 if answer.check_for_letter(letter) {
                     println!("There is at least one {}, so the word is {}", letter, answer.representation)
