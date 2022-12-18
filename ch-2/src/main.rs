@@ -2,7 +2,7 @@ extern crate rand;
 extern crate termion;
 use std::{env, thread, time};
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, BufRead, BufReader, Write, BufWriter};
 use termion::clear;
 use termion::color;
 
@@ -102,6 +102,13 @@ fn main() {
             c = census(world),
         );
         thread::sleep(time::Duration::from_secs(2));
+    }
+
+    if args.len() == 4 {
+        let output_file = File::create(&args[3]).unwrap();
+        let mut writer = BufWriter::new(output_file);
+        display_world(world, &mut writer);
+        writer.flush().unwrap();
     }
 
 
