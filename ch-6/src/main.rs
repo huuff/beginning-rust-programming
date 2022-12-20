@@ -23,6 +23,13 @@ fn get_file_list() -> String {
     listing
 }
 
+fn remove_file(param: &str) -> String {
+    match fs::remove_file(param) {
+        Ok(_) => String::from("Success"),
+        Err(err) => err.to_string(),
+    } 
+}
+
 fn handle_req(conn: TcpStream) {
     let mut req = String::with_capacity(512);
     let mut response = String::with_capacity(4096);
@@ -41,6 +48,7 @@ fn handle_req(conn: TcpStream) {
         match command {
             "flist" => response = get_file_list(),
             "md" => response = make_directory(params.next().unwrap()),
+            "rf" => response = remove_file(params.next().unwrap()),
             _ => response = String::from("Unacceptable command")
         }
         match reader.write(&response.into_bytes()) {
