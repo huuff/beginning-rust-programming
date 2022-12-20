@@ -2,6 +2,8 @@ use std::io::prelude::*;
 use std::net::TcpStream;
 use std::env;
 use std::io;
+use std::thread;
+use std::time::Duration;
 use regex::Regex;
 
 fn validate_input(input: &String) -> bool {
@@ -61,6 +63,7 @@ fn main() {
     match TcpStream::connect(server_string) {
         Ok(server_stream) => {
             println!("Successfully connected to {}", server_string);
+            thread::sleep(Duration::from_secs(1));
             handle_input(server_stream);
         },
         Err(e) => {

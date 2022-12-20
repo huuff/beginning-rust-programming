@@ -39,6 +39,8 @@ fn handle_req(conn: TcpStream) {
         Ok(_) => (),
         Err(err) => println!("Received an error on write: {}", err)
     };
+    reader.flush().unwrap();
+    println!("Sent prompt to client");
 
     let size = reader.read_line(&mut req);
     if size.unwrap() > 0 {
