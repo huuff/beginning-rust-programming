@@ -20,7 +20,7 @@ fn validate_input(input: &String) -> bool {
 
 fn handle_input(mut server_stream: TcpStream) {
     let mut recv_string = [0; 4096];
-    
+
     let mut keep_going: bool = true;
     let regex = Regex::new(r"^[eE][xX][iI][tT]$").unwrap();
 
@@ -62,14 +62,16 @@ fn handle_input(mut server_stream: TcpStream) {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args[1] == "-h" {
+    if args.len() < 3 {
         println!("Usage: cargo run -- «host» «port»");
         std::process::exit(0);
-    }
+    } 
 
-    let server_string = &args[1];
+    let host_string = &args[1];
+    let port_string = &args[2];
+    let server_string = format!("{}:{}", host_string, port_string);
 
-    match TcpStream::connect(server_string) {
+    match TcpStream::connect(&server_string) {
         Ok(server_stream) => {
             println!("Successfully connected to {}", server_string);
             thread::sleep(Duration::from_secs(1));
