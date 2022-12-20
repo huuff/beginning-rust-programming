@@ -50,7 +50,9 @@ fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind("0.0.0.0:3333")?;
 
     for stream in listener.incoming() {
-        handle_req(stream?);
+        let stream = stream?;
+        println!("Received connection from {}",stream.peer_addr()?.to_string());
+        handle_req(stream);
     }
 
     Ok(())
