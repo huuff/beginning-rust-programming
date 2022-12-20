@@ -34,6 +34,7 @@ fn handle_req(conn: TcpStream) {
     if size.unwrap() > 0 {
         let mut params = req.split_whitespace();
         let command = params.next().unwrap();
+        println!("Running command {}", command);
         match command {
             "flist" => response = get_file_list(),
             "md" => response = make_directory(params.next().unwrap()),
