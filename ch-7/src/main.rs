@@ -25,7 +25,7 @@ fn handle_input(mut server_stream: TcpStream) {
     let regex = Regex::new(r"^[eE][xX][iI][tT]$").unwrap();
 
     let mut size = server_stream.read(&mut recv_string);
-    println!("{}", String::from_utf8_lossy(&recv_string));
+    print!("{}", String::from_utf8_lossy(&recv_string));
 
     while keep_going {
         let mut input = String::new();
@@ -35,16 +35,19 @@ fn handle_input(mut server_stream: TcpStream) {
                 if regex.is_match(input.as_str()) {
                     keep_going = false;
                 } else {
+                    println!("Your input is {}", input);
                     if validate_input(&input) {
-                        match server_stream.write(&input.as_bytes()) {
+                        match server_stream.write_all(format!("{}\n", input).as_bytes()) {
                             Ok(_n) => { () },
                             Err(_e) => {
                                 panic!("Unable to write to server");
                             }
                         }
+                        server_stream.flush().unwrap();
                     } else {
                         println!("Not a valid command");
                     }
+                    println!("Waiting for a response from the server...");
                     size = server_stream.read(&mut recv_string);
                     println!("{}", String::from_utf8_lossy(&recv_string));
                 }
