@@ -61,6 +61,12 @@ fn handle_input(mut server_stream: TcpStream) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+
+    if args[1] == "-h" {
+        println!("Usage: cargo run -- «host» «port»");
+        std::process::exit(0);
+    }
+
     let server_string = &args[1];
 
     match TcpStream::connect(server_string) {
