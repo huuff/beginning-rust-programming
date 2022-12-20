@@ -3,6 +3,9 @@ use std::net::{TcpListener, TcpStream};
 use bufstream::BufStream;
 use std::fs;
 
+// lol idk wtf this exercise means
+const STRSIZE: i32 = 10;
+
 fn make_directory(param: &str) -> String {
     match fs::create_dir_all(param) {
         Ok(_) => String::from("Success"),
