@@ -29,7 +29,6 @@ impl Database {
     pub async fn add_record(&mut self) -> Result<(), Box<dyn Error>> {
         let finding = Finding::from_stdin()?;
 
-        // TODO: Insert the struct directly, as I do for querying
         sqlx::query!("
             INSERT INTO findings (title, finding, details, justification) VALUES (?, ?, ?, ?)
         ", finding.title, finding.finding, finding.details, finding.justification).execute(&mut self.connection).await?;
