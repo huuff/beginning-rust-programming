@@ -2,6 +2,7 @@ use sqlx::Connection;
 use sqlx::sqlite::SqliteConnection;
 use std::error::Error;
 use std::io::{self, Write};
+use std::env;
 
 pub struct Database {
     connection: SqliteConnection,
@@ -9,8 +10,8 @@ pub struct Database {
 
 impl Database {
     pub async fn new() -> Result<Self, Box<dyn Error>> {
-        // TODO: from dotenv
-        let mut conn = SqliteConnection::connect("sqlite:stratapp.db").await?;
+        let db_url = env::var("DATABASE_URL")?;
+        let mut conn = SqliteConnection::connect(db_url.as_str()).await?;
 
         sqlx::query!("
           CREATE TABLE IF NOT EXISTS findings(
