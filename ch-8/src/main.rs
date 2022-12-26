@@ -1,6 +1,6 @@
 use std::env;
 use std::error::Error;
-use crate::database::Database;
+use database::Database;
 
 mod database;
 
