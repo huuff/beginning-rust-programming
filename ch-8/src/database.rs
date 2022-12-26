@@ -3,6 +3,7 @@ use sqlx::sqlite::SqliteConnection;
 use std::error::Error;
 use std::env;
 use crate::finding::Finding;
+use serde_json;
 
 pub struct Database {
     connection: SqliteConnection,
@@ -42,7 +43,8 @@ impl Database {
             .await?;
 
         for row in rows {
-            println!("{:?}", row);
+            println!("Debug: {:?}", row);
+            println!("Serde: {}", serde_json::to_string(&row)?);
         }
 
         Ok(())

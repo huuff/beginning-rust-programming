@@ -1,7 +1,8 @@
 use std::io::{self, Write};
 use std::error::Error;
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug, sqlx::FromRow)]
+#[derive(Debug, sqlx::FromRow, Serialize, Deserialize)]
 pub struct Finding {
     pub title: String,
     pub finding: String,
