@@ -18,7 +18,7 @@ pub fn add_record(conn: &Connection) -> io::Result<()> {
     println!("Justificaton");
     io::stdin().read_line(&mut justification)?;
 
-    let command_string = fortmat!(r#"
+    let command_string = format!(r#"
         INSERT INTO FINDINGS (title, finding, details, justification)
         VALUES ("{}", "{}", "{}", "{}")
     "#, title.trim(), finding.trim(), details.trim(), justification.trim());

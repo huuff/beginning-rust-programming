@@ -24,8 +24,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         let command: &str = &args[1];
 
         match command {
-            "add" => dbfuns::add_record(&conn)?,
-            "list" => dbfuncs::list_records(&conn)?,
+            "add" => dbfuncs::add_record(&conn)?,
+            "list" => dbfuncs::list_records(&conn),
             _ => println!("Didn't send a valid command in"),
         }
     } else {
