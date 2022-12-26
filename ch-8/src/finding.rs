@@ -1,6 +1,7 @@
 use std::io::{self, Write};
 use std::error::Error;
 
+#[derive(Debug, sqlx::FromRow)]
 pub struct Finding {
     pub title: String,
     pub finding: String,

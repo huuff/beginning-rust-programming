@@ -37,16 +37,13 @@ impl Database {
     }
 
     pub async fn list_records(&mut self) -> Result<(), Box<dyn Error>> {
-        let rows = sqlx::query!("SELECT * FROM findings")
+        let rows = sqlx::query_as::<_, Finding>("SELECT title, finding, details, justification FROM findings")
             .fetch_all(&mut self.connection)
             .await?;
 
         for row in rows {
             println!("-------------------");
-            println!("Title = {}", row.title);
-            println!("Finding = {}", row.finding);
-            row.details.map(|d| println!("Details = {}", d));
-            row.justification.map(|j| println!("Justification = {}", j));
+            println!("{:?}", row);
         }
 
         Ok(())
