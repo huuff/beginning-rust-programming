@@ -1,22 +1,11 @@
-use sqlite;
-use sqlite::Connection;
 use std::env;
 use std::error::Error;
+use crate::database::Database;
 
-mod dbfuncs;
+mod database;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let conn = Connection::open("stratapp.db")?;
-
-    conn.execute("
-        CREATE TABLE IF NOT EXISTS findings(
-            findings_ID INTEGER PRIMARY KEY,
-            title TEXT NOT NULL,
-            finding TEXT NOT NULL,
-            details TEXT,
-            justification TEXT
-        )    
-    ")?;
+    let database = Database::new()?;
 
     let args: Vec<String> = env::args().collect();
 
@@ -24,8 +13,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         let command: &str = &args[1];
 
         match command {
-            "add" => dbfuncs::add_record(&conn)?,
-            "list" => dbfuncs::list_records(&conn),
+            "add" => database.add_record()?,
+            "list" => database.list_records(),
             _ => println!("Didn't send a valid command in"),
         }
     } else {
