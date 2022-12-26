@@ -15,7 +15,7 @@ impl Database {
 
         sqlx::query!("
           CREATE TABLE IF NOT EXISTS findings(
-            findings_ID INTEGER PRIMARY KEY,
+            findings_id INTEGER PRIMARY KEY,
             title TEXT NOT NULL,
             finding TEXT NOT NULL,
             details TEXT,
