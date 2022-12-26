@@ -10,9 +10,10 @@ pub struct Database {
 
 impl Database {
     pub async fn new() -> Result<Self, Box<dyn Error>> {
+        // TODO: from dotenv
         let mut conn = SqliteConnection::connect("sqlite:stratapp.db").await?;
 
-        sqlx::query("
+        sqlx::query!("
           CREATE TABLE IF NOT EXISTS findings(
             findings_ID INTEGER PRIMARY KEY,
             title TEXT NOT NULL,
