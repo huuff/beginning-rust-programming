@@ -16,7 +16,6 @@ impl Finding {
         let mut details = String::new();
         let mut justification = String::new();
 
-        // TODO: Some way of leaving details and justification as Nones
         print!("Title: ");
         io::stdout().flush()?;
         io::stdin().read_line(&mut title)?;
@@ -30,11 +29,28 @@ impl Finding {
         io::stdout().flush()?;
         io::stdin().read_line(&mut justification)?;
 
+        let details = {
+            let details = details.trim();
+            if details.is_empty() {
+                None
+            } else {
+                Some(details.to_string())
+            }
+        };
+
+        let justification = {
+            let justification = justification.trim();
+            if justification.is_empty() {
+                None
+            } else {
+                Some(justification.to_string())
+            }
+        };
+
         Ok(Finding {
             title: title.trim().to_string(),
             finding: finding.trim().to_string(),
-            details: Some(details.trim().to_string()),
-            justification: Some(justification.trim().to_string()),
+            details, justification,
         })
     }
 }
