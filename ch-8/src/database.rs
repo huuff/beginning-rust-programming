@@ -42,7 +42,6 @@ impl Database {
             .await?;
 
         for row in rows {
-            println!("-------------------");
             println!("{:?}", row);
         }
 
