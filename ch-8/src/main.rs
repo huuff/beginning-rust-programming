@@ -6,6 +6,7 @@ use dotenv::dotenv;
 
 mod database;
 mod args;
+mod finding;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
