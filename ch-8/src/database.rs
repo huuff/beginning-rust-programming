@@ -58,16 +58,15 @@ impl Database {
 
     pub async fn list_records(&mut self) -> Result<(), Box<dyn Error>> {
         let rows = sqlx::query!("SELECT * FROM findings")
-                            .fetch_all(&mut self.connection)
-                            .await?;
+            .fetch_all(&mut self.connection)
+            .await?;
 
-        // TODO: No unwrapping
         for row in rows {
             println!("-------------------");
             println!("Title = {}", row.title);
             println!("Finding = {}", row.finding);
-            println!("Details = {}", row.details.unwrap());
-            println!("Justification = {}", row.justification.unwrap());
+            row.details.map(|d| println!("Details = {}", d));
+            row.justification.map(|j| println!("Justification = {}", j));
         }
 
         Ok(())
