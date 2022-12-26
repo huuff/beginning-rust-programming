@@ -51,17 +51,18 @@ impl Database {
         Ok(())
     }
 
-    pub fn list_records(&self) {
+    pub fn list_records(&self) -> Result<(), Box<dyn Error>> {
         let mut statement = self.connection
-            .prepare("SELECT * FROM findings")
-            .unwrap();
+            .prepare("SELECT * FROM findings")?;
 
-        while let State::Row = statement.next().unwrap() {
+        while let State::Row = statement.next()? {
             println!("-------------------");
-            println!("Title = {}", statement.read::<String, _>(1).unwrap());
-            println!("Finding = {}", statement.read::<String, _>(2).unwrap());
-            println!("Details = {}", statement.read::<String, _>(3).unwrap());
-            println!("Justification = {}", statement.read::<String, _>(4).unwrap());
+            println!("Title = {}", statement.read::<String, _>(1)?);
+            println!("Finding = {}", statement.read::<String, _>(2)?);
+            println!("Details = {}", statement.read::<String, _>(3)?);
+            println!("Justification = {}", statement.read::<String, _>(4)?);
         }
+
+        Ok(())
     }
 }

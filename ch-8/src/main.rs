@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         match command {
             "add" => database.add_record()?,
-            "list" => database.list_records(),
+            "list" => database.list_records()?,
             _ => println!("Didn't send a valid command in"),
         }
     } else {
