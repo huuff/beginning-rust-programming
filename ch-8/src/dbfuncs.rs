@@ -5,14 +5,14 @@ use std::io;
 
 pub fn add_record(conn: &Connection) -> io::Result<()> {
     let mut title = String::new();
-    let mut findings = String::new();
+    let mut finding = String::new();
     let mut details = String::new();
     let mut justification = String::new();
 
     println!("Title");
     io::stdin().read_line(&mut title)?;
     println!("Finding text");
-    io::stdin().read_line(&mut findings)?;
+    io::stdin().read_line(&mut finding)?;
     println!("Details of the finding");
     io::stdin().read_line(&mut details)?;
     println!("Justificaton");
@@ -34,9 +34,9 @@ pub fn list_records(conn: &Connection) {
 
     while let State::Row = statement.next().unwrap() {
         println!("-------------------");
-        println!("Title = {}", statement.read::<String>(1).unwrap());
-        println!("Finding = {}", statement.read::<String>(2).unwrap());
-        println!("Details = {}", statement.read::<String>(3).unwrap());
-        println!("Justification = {}", statement.read::<String>(4).unwrap());
+        println!("Title = {}", statement.read::<String, _>(1).unwrap());
+        println!("Finding = {}", statement.read::<String, _>(2).unwrap());
+        println!("Details = {}", statement.read::<String, _>(3).unwrap());
+        println!("Justification = {}", statement.read::<String, _>(4).unwrap());
     }
 }

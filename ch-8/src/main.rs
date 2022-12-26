@@ -10,10 +10,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     conn.execute("
         CREATE TABLE IF NOT EXISTS findings(
-            findings_ID INTEGER PRIMARY KEY
-            title TEXT NOT NULL
-            findings TEXT NOT NULL
-            details TEXT
+            findings_ID INTEGER PRIMARY KEY,
+            title TEXT NOT NULL,
+            finding TEXT NOT NULL,
+            details TEXT,
             justification TEXT
         )    
     ")?;
