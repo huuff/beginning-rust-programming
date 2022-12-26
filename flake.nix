@@ -22,6 +22,9 @@
         })
         cargo
         rust-analyzer
+        sqlite
+        pkg-config
+        openssl
       ];
     };
   };

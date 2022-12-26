@@ -1,19 +1,20 @@
 use std::error::Error;
 use clap::Parser;
-use database::Database;
+use crate::database::Database;
 use args::{Args, Command};
 
 mod database;
 mod args;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let database = Database::new()?;
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let mut database = Database::new().await?;
 
     let args = Args::parse();
 
     match args.command {
-        Command::Add => database.add_record()?,
-        Command::List => database.list_records()?,
+        Command::Add => database.add_record().await?,
+        Command::List => database.list_records().await?,
     }
 
     Ok(())

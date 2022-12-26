@@ -1,16 +1,18 @@
-use sqlite::{Connection, State};
+use sqlx::{Connection,Row};
+use sqlx::sqlite::SqliteConnection;
 use std::error::Error;
 use std::io::{self, Write};
+use futures::TryStreamExt;
 
 pub struct Database {
-    connection: Connection,
+    connection: SqliteConnection,
 }
 
 impl Database {
-    pub fn new() -> Result<Self, Box<dyn Error>> {
-        let conn = Connection::open("stratapp.db")?;
+    pub async fn new() -> Result<Self, Box<dyn Error>> {
+        let mut conn = SqliteConnection::connect("sqlite:stratapp.db").await?;
 
-        conn.execute("
+        sqlx::query("
           CREATE TABLE IF NOT EXISTS findings(
             findings_ID INTEGER PRIMARY KEY,
             title TEXT NOT NULL,
@@ -18,12 +20,12 @@ impl Database {
             details TEXT,
             justification TEXT
           )  
-        ")?;
+        ").execute(&mut conn).await?;
 
         Ok(Database { connection: conn })
     }
 
-    pub fn add_record(&self) -> Result<(), Box<dyn Error>> {
+    pub async fn add_record(&mut self) -> Result<(), Box<dyn Error>> {
         let mut title = String::new();
         let mut finding = String::new();
         let mut details = String::new();
@@ -46,21 +48,23 @@ impl Database {
             INSERT INTO FINDINGS (title, finding, details, justification)
             VALUES ("{}", "{}", "{}", "{}")
         "#, title.trim(), finding.trim(), details.trim(), justification.trim());
-        self.connection.execute(&command_string)?;
+
+        sqlx::query(command_string.as_str()).execute(&mut self.connection).await?;
 
         Ok(())
     }
 
-    pub fn list_records(&self) -> Result<(), Box<dyn Error>> {
-        let mut statement = self.connection
-            .prepare("SELECT * FROM findings")?;
+    pub async fn list_records(&mut self) -> Result<(), Box<dyn Error>> {
+        let mut rows = sqlx::query("SELECT * FROM findings")
+                            .fetch(&mut self.connection)
+                            ;
 
-        while let State::Row = statement.next()? {
+        while let Some(row) = rows.try_next().await? {
             println!("-------------------");
-            println!("Title = {}", statement.read::<String, _>(1)?);
-            println!("Finding = {}", statement.read::<String, _>(2)?);
-            println!("Details = {}", statement.read::<String, _>(3)?);
-            println!("Justification = {}", statement.read::<String, _>(4)?);
+            println!("Title = {}", row.try_get::<String, _>("title")?);
+            println!("Finding = {}", row.try_get::<String, _>("finding")?);
+            println!("Details = {}", row.try_get::<String, _>("details")?);
+            println!("Justification = {}", row.try_get::<String, _>("justification")?);
         }
 
         Ok(())
