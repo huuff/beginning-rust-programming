@@ -17,11 +17,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let results = collection.find(doc! { "name": input.trim() }, None)?;
 
     for result in results {
-        if let Some(location) = result?.get("location").and_then(Bson::as_str) {
-            println!("location: {}", location);
-        } else {
-            println!("no location listed");
-        }
+        println!("{:?}", result);
     }
 
     Ok(())
