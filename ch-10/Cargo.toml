@@ -1,0 +1,12 @@
+[package]
+name = "ch-10"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hyper = "0.14.23"
+hyper-tls = "0.5.0"
+tokio = { version = "1.23.0", features = ["macros", "net", "fs"] }
+voca_rs = "1.15.2"
