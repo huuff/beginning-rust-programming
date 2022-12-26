@@ -1,8 +1,7 @@
-use sqlx::{Connection,Row};
+use sqlx::Connection;
 use sqlx::sqlite::SqliteConnection;
 use std::error::Error;
 use std::io::{self, Write};
-use futures::TryStreamExt;
 
 pub struct Database {
     connection: SqliteConnection,
@@ -45,27 +44,30 @@ impl Database {
         io::stdout().flush()?;
         io::stdin().read_line(&mut justification)?;
 
-        let command_string = format!(r#"
-            INSERT INTO FINDINGS (title, finding, details, justification)
-            VALUES ("{}", "{}", "{}", "{}")
-        "#, title.trim(), finding.trim(), details.trim(), justification.trim());
+        let title = title.trim();
+        let finding = finding.trim();
+        let details = details.trim();
+        let justification = justification.trim();
 
-        sqlx::query(command_string.as_str()).execute(&mut self.connection).await?;
+        sqlx::query!("
+            INSERT INTO findings (title, finding, details, justification) VALUES (?, ?, ?, ?)
+        ", title, finding, details, justification).execute(&mut self.connection).await?;
 
         Ok(())
     }
 
     pub async fn list_records(&mut self) -> Result<(), Box<dyn Error>> {
-        let mut rows = sqlx::query("SELECT * FROM findings")
-                            .fetch(&mut self.connection)
-                            ;
+        let rows = sqlx::query!("SELECT * FROM findings")
+                            .fetch_all(&mut self.connection)
+                            .await?;
 
-        while let Some(row) = rows.try_next().await? {
+        // TODO: No unwrapping
+        for row in rows {
             println!("-------------------");
-            println!("Title = {}", row.try_get::<String, _>("title")?);
-            println!("Finding = {}", row.try_get::<String, _>("finding")?);
-            println!("Details = {}", row.try_get::<String, _>("details")?);
-            println!("Justification = {}", row.try_get::<String, _>("justification")?);
+            println!("Title = {}", row.title);
+            println!("Finding = {}", row.finding);
+            println!("Details = {}", row.details.unwrap());
+            println!("Justification = {}", row.justification.unwrap());
         }
 
         Ok(())
