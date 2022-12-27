@@ -12,7 +12,7 @@ async fn write_to_file(data: &String, filename: &str) -> Result<(), Box<dyn Erro
     let mut output_file = if std::path::Path::new(filename).exists() {
         OpenOptions::new().append(true).open(filename).await?
     } else {
-        File::create("resp-output.txt").await?
+        File::create(filename).await?
 
     };
 
@@ -43,6 +43,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
              .long("write")
              .help("Write output to file")
              .default_missing_value(OUTPUT_FILE_NAME)
+             .action(ArgAction::Set)
             )
         .arg(Arg::new("hostname")
              .required(true)
@@ -67,7 +68,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     if args.contains_id("write") {
-        write_to_file(&body, args.get_one::<String>("write").unwrap()).await?;
+        let file_name = args.get_one::<String>("write").unwrap();
+        write_to_file(&body, file_name).await?;
     }
 
     if args.get_flag("print") {
