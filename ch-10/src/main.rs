@@ -1,4 +1,4 @@
-use tokio::fs::File;
+use tokio::fs::{File, OpenOptions};
 use tokio::io::AsyncWriteExt;
 use std::error::Error;
 use voca_rs::*;
@@ -6,8 +6,16 @@ use hyper_tls::HttpsConnector;
 use hyper::{Client, body::HttpBody as _};
 use clap::{Arg, command, ArgGroup, ArgAction};
 
+const OUTPUT_FILE_NAME: &str = "resp-output.txt";
+
 async fn write_to_file(data: &String) -> Result<(), Box<dyn Error>> {
-    let mut output_file = File::create("resp-output.txt").await?;
+    let mut output_file = if std::path::Path::new(OUTPUT_FILE_NAME).exists() {
+        OpenOptions::new().append(true).open(OUTPUT_FILE_NAME).await?
+    } else {
+        File::create("resp-output.txt").await?
+
+    };
+
     output_file.write_all(data.as_bytes()).await?;
 
     Ok(())
@@ -22,27 +30,27 @@ fn print_to_screen(data: &String) {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let args = command!()
-            .arg(Arg::new("print")
-                        .short('p')
-                        .long("print")
-                        .help("Print output to screen")
-                        .action(ArgAction::SetTrue)
-                 )
-            .arg(Arg::new("write")
-                        .short('w')
-                        .long("write")
-                        .help("Write output to file")
-                        .action(ArgAction::SetTrue)
-                 )
-            .arg(Arg::new("hostname")
-                    .required(true)
-                 )
-            .group(ArgGroup::new("action")
-                    .required(true)
-                    .args(["print", "write"])
-                   )
-            .get_matches()
-            ;
+        .arg(Arg::new("print")
+             .short('p')
+             .long("print")
+             .help("Print output to screen")
+             .action(ArgAction::SetTrue)
+            )
+        .arg(Arg::new("write")
+             .short('w')
+             .long("write")
+             .help("Write output to file")
+             .action(ArgAction::SetTrue)
+            )
+        .arg(Arg::new("hostname")
+             .required(true)
+            )
+        .group(ArgGroup::new("action")
+               .required(true)
+               .args(["print", "write"])
+              )
+        .get_matches()
+        ;
 
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
