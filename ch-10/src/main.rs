@@ -4,8 +4,7 @@ use std::error::Error;
 use voca_rs::*;
 use hyper_tls::HttpsConnector;
 use hyper::{Client, body::HttpBody as _};
-use args::Args;
-use clap::Parser;
+use clap::{Arg, command, ArgGroup, ArgAction};
 
 mod args;
 
@@ -24,13 +23,30 @@ fn print_to_screen(data: &String) {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let args = command!()
+            .arg(Arg::new("print")
+                        .short('p')
+                        .long("print")
+                        .help("Print output to screen")
+                        .action(ArgAction::SetTrue)
+                 )
+            .arg(Arg::new("write")
+                        .short('w')
+                        .long("write")
+                        .help("Write output to file")
+                        .action(ArgAction::SetTrue)
+                 )
+            .arg(Arg::new("hostname")
+                    .required(true)
+                 )
+            .get_matches()
+            ;
+
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
     let mut body = String::new();
 
-    let args = Args::parse();
-
-    let mut res = client.get(args.hostname.parse()?).await?;
+    let mut res = client.get(args.get_one::<String>("hostname").unwrap().parse()?).await?;
     println!("Headers:\n{:#?}", res.headers());
 
     while let Some(chunk) = res.body_mut().data().await {
@@ -38,11 +54,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         body.push_str(&(String::from_utf8_lossy(&chunk)));
     }
 
-    if args.write {
+    if args.get_flag("write") {
         write_to_file(&body).await?;
     }
 
-    if args.print {
+    if args.get_flag("print") {
         print_to_screen(&body);
     }
 
