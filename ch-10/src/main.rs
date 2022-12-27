@@ -8,9 +8,9 @@ use clap::{Arg, command, ArgGroup, ArgAction};
 
 const OUTPUT_FILE_NAME: &str = "resp-output.txt";
 
-async fn write_to_file(data: &String) -> Result<(), Box<dyn Error>> {
-    let mut output_file = if std::path::Path::new(OUTPUT_FILE_NAME).exists() {
-        OpenOptions::new().append(true).open(OUTPUT_FILE_NAME).await?
+async fn write_to_file(data: &String, filename: &str) -> Result<(), Box<dyn Error>> {
+    let mut output_file = if std::path::Path::new(filename).exists() {
+        OpenOptions::new().append(true).open(filename).await?
     } else {
         File::create("resp-output.txt").await?
 
@@ -37,17 +37,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
              .action(ArgAction::SetTrue)
             )
         .arg(Arg::new("write")
+             .num_args(0..=1)
+             .value_name("FILE")
              .short('w')
              .long("write")
              .help("Write output to file")
-             .action(ArgAction::SetTrue)
+             .default_missing_value(OUTPUT_FILE_NAME)
             )
         .arg(Arg::new("hostname")
              .required(true)
             )
         .group(ArgGroup::new("action")
                .required(true)
-               .args(["print", "write"])
+               .args(["print", "write", ])
               )
         .get_matches()
         ;
@@ -64,8 +66,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         body.push_str(&(String::from_utf8_lossy(&chunk)));
     }
 
-    if args.get_flag("write") {
-        write_to_file(&body).await?;
+    if args.contains_id("write") {
+        write_to_file(&body, args.get_one::<String>("write").unwrap()).await?;
     }
 
     if args.get_flag("print") {
