@@ -6,8 +6,6 @@ use hyper_tls::HttpsConnector;
 use hyper::{Client, body::HttpBody as _};
 use clap::{Arg, command, ArgGroup, ArgAction};
 
-mod args;
-
 async fn write_to_file(data: &String) -> Result<(), Box<dyn Error>> {
     let mut output_file = File::create("resp-output.txt").await?;
     output_file.write_all(data.as_bytes()).await?;
@@ -39,6 +37,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .arg(Arg::new("hostname")
                     .required(true)
                  )
+            .group(ArgGroup::new("action")
+                    .required(true)
+                    .args(["print", "write"])
+                   )
             .get_matches()
             ;
 
