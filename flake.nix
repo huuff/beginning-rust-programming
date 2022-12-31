@@ -17,7 +17,10 @@
   {
     devShell.${system} = mkShell {
       buildInputs = [
-        (rust-bin.beta.latest.default.override {
+        #(rust-bin.beta.latest.default.override {
+          #extensions = [ "rust-src" ];
+        #})
+        ((rust-bin.selectLatestNightlyWith (toolchain: toolchain.default)).override {
           extensions = [ "rust-src" ];
         })
         cargo
