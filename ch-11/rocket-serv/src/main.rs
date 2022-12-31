@@ -2,7 +2,7 @@
 #[macro_use] extern crate rocket;
 
 use rocket::Data;
-use std::fs;
+use std::{fs::{self, File}, io::Write};
 
 #[get("/")]
 fn index() -> &'static str {
@@ -12,14 +12,22 @@ fn index() -> &'static str {
 #[get("/bacon")]
 fn bacon() -> String {
     let bacon_contents = fs::read_to_string("bacon.txt")
-                            .expect("Unable to open file");
+        .expect("Unable to open file");
 
     format!("{}\n", bacon_contents)
 }
 
 #[post("/upload", format = "plain", data = "<data>")]
 fn upload(data: Data) -> Result<String, std::io::Error> {
-    data.stream_to_file("/tmp/data.txt").map(|num_bytes| format!("Wrote {} bytes", num_bytes))
+    let mut msg: Vec<u8> = Vec::new();
+    data.stream_to(&mut msg)?;
+
+    let mut file = File::create("/tmp/data.txt")?;
+    file.write_all(&msg)?;
+    let msg = String::from_utf8(msg).unwrap();
+    println!("{}", msg);
+
+    Ok(format!("Wrote {} bytes", msg.len())) 
 }
 
 #[get("/greetz/<name>/<age>")]
@@ -42,6 +50,6 @@ fn ofage(name: String, age: u8) -> String {
 
 fn main() {
     rocket::ignite()
-            .mount("/", routes![index,greetz,upload,bacon,ofage])
-            .launch();
+        .mount("/", routes![index,greetz,upload,bacon,ofage])
+        .launch();
 }
