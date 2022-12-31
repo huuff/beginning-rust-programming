@@ -39,6 +39,11 @@ fn greetz(name: String, age: u8) -> String {
     }
 }
 
+#[get("/ex2/<param1>/<param2>")]
+fn ex2(param1: String, param2: String) -> String {
+    format!("This endpoint is for exercise 2, which isn't very exciting. param1: {param1}, param2: {param2}")
+}
+
 #[get("/ofage/<name>/<age>")]
 fn ofage(name: String, age: u8) -> String {
     if age > 18 {
@@ -50,6 +55,6 @@ fn ofage(name: String, age: u8) -> String {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![index,greetz,upload,bacon,ofage])
+        .mount("/", routes![index,greetz,upload,bacon,ofage,ex2])
         .launch();
 }
