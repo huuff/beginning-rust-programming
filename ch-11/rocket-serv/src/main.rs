@@ -24,7 +24,11 @@ fn upload(data: Data) -> Result<String, std::io::Error> {
 
 #[get("/greetz/<name>/<age>")]
 fn greetz(name: String, age: u8) -> String {
-    format!("Greetz, {} year old named {}!", age, name)
+    if name == "Wuutz" {
+        String::from("Hello Wuutz, you the best!")
+    } else {
+        format!("Greetz, {} year old named {}!", age, name)
+    }
 }
 
 #[get("/ofage/<name>/<age>")]
