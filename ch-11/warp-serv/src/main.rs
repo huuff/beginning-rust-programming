@@ -16,7 +16,10 @@ async fn main() {
                     .and(warp::path::param())
                     .map(|name: String| format!("Goodbye, {}\n", name));
 
-    let routes = warp::get().and(bacon.or(hello).or(bye));
+    let stat_ic = warp::path("static")
+                        .map(|| format!("This is for exercise 4"));
+
+    let routes = warp::get().and(bacon.or(hello).or(bye).or(stat_ic));
 
     warp::serve(routes)
         .run(([127, 0, 0, 1], 8080))
