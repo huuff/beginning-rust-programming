@@ -9,8 +9,12 @@ pub struct Args {
 
 #[derive(Subcommand)]
 pub enum Command {
+    #[command(alias = "DISKS")]
     Disks,
+    #[command(alias = "MEMORY")]
     Memory,
+    #[command(alias = "PROCESS")]
     Process,
+    #[command(alias = "USERS")]
     Users,
 }
