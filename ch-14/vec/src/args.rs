@@ -9,5 +9,7 @@ pub struct Args {
 #[derive(Subcommand)]
 pub enum Input {
     Stdin,
-    File,
+    File {
+        file: String
+    }
 }
