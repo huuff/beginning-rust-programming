@@ -9,5 +9,7 @@ pub struct Args {
 #[derive(Subcommand)]
 pub enum Command {
     Add,
-    Query,
+    Query {
+        q: String,
+    },
 }

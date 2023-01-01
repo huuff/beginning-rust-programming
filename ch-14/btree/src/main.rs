@@ -43,8 +43,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                 let year = right.parse::<i32>().unwrap();
                 movies.insert(String::from(left), year);
             },
-            Command::Query => {
-                todo!();
+            Command::Query { q } => {
+                let year = movies.get(&q);
+
+                if let Some(year) = year {
+                    println!("{q}: {}", year.to_string());
+                } else {
+                    eprintln!("Movie {q} not found");
+                }
             },
         }
     } else {
