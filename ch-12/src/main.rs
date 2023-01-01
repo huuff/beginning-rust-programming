@@ -41,6 +41,15 @@ fn display_users() {
     }
 }
 
+fn networks() {
+    let mut system = sysinfo::System::new_all();
+    system.refresh_all();
+
+    for network in system.networks() {
+        println!("{:?}", network);
+    }
+}
+
 fn main() {
     let s = sysinfo::System::new();
     println!("This system has been up {} seconds", s.boot_time());
@@ -53,6 +62,7 @@ fn main() {
         Command::Memory => display_memory(),
         Command::Process => list_process(),
         Command::Users => display_users(),
+        Command::Networks => networks(),
     }
 }
 

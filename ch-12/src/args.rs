@@ -17,4 +17,6 @@ pub enum Command {
     Process,
     #[command(alias = "USERS")]
     Users,
+    #[command(alias = "NETWORKS")]
+    Networks,
 }
