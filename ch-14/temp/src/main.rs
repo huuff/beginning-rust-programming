@@ -55,12 +55,17 @@ fn main() -> Result<(), Box<dyn Error>> {
         Command::Average => {
             let (min_avg, max_avg) = get_average(&daily_temps);
             println!("Average daily low: {min_avg}, average daily high: {max_avg}");
-        }
+        },
         Command::Total => {
             let (min_total, max_total) = get_totals(&daily_temps);
             println!("Total daily low: {min_total}, total daily high: {max_total}");
+        },
+        Command::All => {
+            for Temperature { minimum, maximum } in daily_temps {
+                println!("Minimum: {minimum}, maximum: {maximum}");
+            }
         }
-    }
+    };
 
 
     Ok(())
