@@ -31,6 +31,26 @@ fn get_average(temps: &Vec<Temperature>) -> (f32, f32) {
     (min_total / count as f32, max_total / count as f32)
 }
 
+fn partial_min<T: PartialOrd>(x: T, y: T) -> Option<T> {
+    let cmp = x.partial_cmp(&y)?;
+
+    match cmp {
+        std::cmp::Ordering::Less => Some(x),
+        std::cmp::Ordering::Greater => Some(y),
+        std::cmp::Ordering::Equal => Some(x),
+    }
+}
+
+fn partial_max<T: PartialOrd>(x: T, y: T) -> Option<T> {
+    let cmp = x.partial_cmp(&y)?;
+
+    match cmp {
+        std::cmp::Ordering::Less => Some(y),
+        std::cmp::Ordering::Greater => Some(x),
+        std::cmp::Ordering::Equal => Some(x),
+    }
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let file = File::open("temperatures.txt")?;
     let mut daily_temps: Vec<Temperature> = Vec::new();
@@ -40,11 +60,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     for line in lines {
         let line = line?;
         let mut split_line = line.as_str().split(',');
-        let left = split_line.next().unwrap();
-        let right = split_line.next().unwrap();
+        let left: f32 = split_line.next().unwrap().parse()?;
+        let right: f32 = split_line.next().unwrap().parse()?;
         let today = Temperature {
-            minimum: left.parse()?,
-            maximum: right.parse()?,
+            minimum: partial_min(left, right).unwrap(),
+            maximum: partial_max(left, right).unwrap(),
         };
         daily_temps.push(today);
     }
