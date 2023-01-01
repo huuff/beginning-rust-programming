@@ -37,7 +37,7 @@ fn display_users() {
     system.refresh_all();
 
     for user in system.users() {
-        println!("{} is in {} groups", user.name(), user.groups().len());
+        println!("{} is in {:?} groups", user.name(), user.groups());
     }
 }
 
