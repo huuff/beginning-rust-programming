@@ -32,6 +32,11 @@ fn main() -> Result<(), Box<dyn Error>>{
         io::stdin().read_line(&mut query_input)?;
         query_input = query_input.trim().to_string();
 
+        if query_input == "bye" {
+            println!("Bye!");
+            break;
+        }
+
         for resp in &response_vector {
             if query_input.contains(resp.key.as_str()) {
                 found = true;
@@ -44,4 +49,6 @@ fn main() -> Result<(), Box<dyn Error>>{
             println!("I'm not sure what you are saying");
         }
     }
+
+    Ok(())
 }
