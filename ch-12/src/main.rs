@@ -1,5 +1,8 @@
+mod args;
+
 use sysinfo::{ProcessExt, SystemExt, UserExt};
-use std::env;
+use clap::Parser;
+use args::{Args, Command};
 
 fn display_memory() {
     let mut system = sysinfo::System::new_all();
@@ -43,14 +46,13 @@ fn main() {
     println!("This system has been up {} seconds", s.boot_time());
     println!("The current process id is {}", sysinfo::get_current_pid().unwrap());
 
-    let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
 
-    match args[1].as_str() {
-        "disks" => display_disk(),
-        "memory" => display_memory(),
-        "process" => list_process(),
-        "users" => display_users(),
-        _ => println!("You haven't provided an acceptable parameter"),
+    match args.command {
+        Command::Disks => display_disk(),
+        Command::Memory => display_memory(),
+        Command::Process => list_process(),
+        Command::Users => display_users(),
     }
 }
 
