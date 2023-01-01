@@ -9,7 +9,18 @@ fn get_process_name() -> String {
     String::from(this_file.to_str().unwrap())
 }
 
-fn log(message: &str, facility: Facility) -> Result<(), Box<dyn Error>> {
+enum Severity {
+    Emergency,
+    Alert,
+    Critical,
+    Error,
+    Warning,
+    Notice,
+    Info,
+    Debug,
+}
+
+fn log(message: &str, facility: Facility, severity: Severity) -> Result<(), Box<dyn Error>> {
     let this_pid = get_current_pid().unwrap();
     let formatter = Formatter3164 {
         facility,
@@ -21,9 +32,20 @@ fn log(message: &str, facility: Facility) -> Result<(), Box<dyn Error>> {
     let mut writer = syslog::unix(formatter)?;
     writer.err(message)?;
 
+    match severity {
+        Severity::Emergency => writer.emerg(message)?,
+        Severity::Alert => writer.alert(message)?,
+        Severity::Critical => writer.crit(message)?,
+        Severity::Error => writer.err(message)?,
+        Severity::Warning => writer.warning(message)?,
+        Severity::Notice => writer.notice(message)?,
+        Severity::Info => writer.info(message)?,
+        Severity::Debug => writer.debug(message)?,
+    }
+
     Ok(())
 }
 
 fn main() {
-    log("This is a log message", Facility::LOG_USER).unwrap();
+    log("This is a log message", Facility::LOG_USER, Severity::Info).unwrap();
 }
