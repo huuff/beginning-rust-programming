@@ -53,8 +53,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match command {
         Command::Average => {
-            let avgs = get_average(&daily_temps);
-            println!("Average daily low: {}, average daily high: {}", avgs.0, avgs.1);
+            let (min_avg, max_avg) = get_average(&daily_temps);
+            println!("Average daily low: {min_avg}, average daily high: {max_avg}");
         }
         Command::Total => {
             let (min_total, max_total) = get_totals(&daily_temps);
