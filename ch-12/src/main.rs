@@ -28,7 +28,7 @@ fn list_process() {
     system.refresh_all();
 
     for (pid, proc_entry) in system.processes() {
-        println!("{}:{}, status: {:?}", pid, proc_entry.name(), proc_entry.status());
+        println!("{}:{}, status: {:?}", pid, proc_entry.exe().to_str().unwrap(), proc_entry.status());
     }
 }
 
