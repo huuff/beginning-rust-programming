@@ -1,3 +1,10 @@
+use clap::Parser;
+
+#[derive(Parser)]
+struct Args {
+    num: u128,
+}
+
 fn fac(n: u128) -> u128 {
     if n > 1 {
         n * fac(n-1)
@@ -7,5 +14,6 @@ fn fac(n: u128) -> u128 {
 }
 
 fn main() {
-    println!("The result is {}", fac(10));
+    let args = Args::parse();
+    println!("The result is {}", fac(args.num));
 }
