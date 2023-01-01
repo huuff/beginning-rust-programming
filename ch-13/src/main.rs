@@ -9,10 +9,10 @@ fn get_process_name() -> String {
     String::from(this_file.to_str().unwrap())
 }
 
-fn log(message: &str) -> Result<(), Box<dyn Error>> {
+fn log(message: &str, facility: Facility) -> Result<(), Box<dyn Error>> {
     let this_pid = get_current_pid().unwrap();
     let formatter = Formatter3164 {
-        facility: Facility::LOG_USER,
+        facility,
         hostname: None,
         process: get_process_name(),
         pid: this_pid.as_u32(),
@@ -25,5 +25,5 @@ fn log(message: &str) -> Result<(), Box<dyn Error>> {
 }
 
 fn main() {
-    log("This is a log message").unwrap();
+    log("This is a log message", Facility::LOG_USER).unwrap();
 }
