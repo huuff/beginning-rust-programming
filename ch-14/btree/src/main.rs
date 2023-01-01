@@ -1,8 +1,11 @@
+mod args;
+
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::iter::FromIterator;
 use std::error::Error;
+use args::{Args, Command};
+use clap::Parser;
 
 fn fill_tree() -> Result<BTreeMap<String, i32>, Box<dyn Error>> {
     let file = File::open("values.txt")?;
@@ -24,23 +27,39 @@ fn fill_tree() -> Result<BTreeMap<String, i32>, Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let movies: BTreeMap<String, i32> = fill_tree()?;
+    let mut movies: BTreeMap<String, i32> = fill_tree()?;
 
-    println!("We have {} movies", movies.len());
 
-    match movies.get("Captain America") {
-        Some(year) => println!("{}", year),
-        None => println!("Unable to find that movie"),
+    let command = Args::parse().command;
+
+    if let Some(command) = command {
+        match command {
+            Command::Add => {
+                let mut input = String::with_capacity(128);
+                std::io::stdin().read_line(&mut input)?;
+                let mut split_input = input.as_str().trim().split(',');
+                let left = split_input.next().unwrap();
+                let right = split_input.next().unwrap();
+                let year = right.parse::<i32>().unwrap();
+                movies.insert(String::from(left), year);
+            },
+            Command::Query => {
+                todo!();
+            },
+        }
+    } else {
+
     }
 
+    println!("We have {} movies: ", movies.len());
     for (movie, year) in &movies {
         println!("{}: {}", movie, year);
     }
 
-    let mut movie_vec = Vec::from_iter(movies);
-    movie_vec.sort_by(|&(_, a), &(_,b)| a.cmp(&b));
-
-    println!("{:?}", movie_vec);
+    //match movies.get("Captain America") {
+    //Some(year) => println!("{}", year),
+    //None => println!("Unable to find that movie"),
+    //}
 
     Ok(())
 }
