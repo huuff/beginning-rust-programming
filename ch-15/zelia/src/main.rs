@@ -87,4 +87,22 @@ mod tests {
         
         Ok(())
     }
+
+    #[test]
+    fn finds_response() {
+        // ARRANGE
+        let response_vector = vec![
+            ChatResponse {
+                key: String::from("key"),
+                response: String::from("response")
+            }
+        ];
+
+        // ACT
+        let response = find_response(&response_vector, "this contains key");
+
+        // ASSERT
+        assert!(response.is_some());
+        assert_eq!(response.unwrap(), "response");
+    }
 }
