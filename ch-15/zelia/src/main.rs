@@ -105,4 +105,21 @@ mod tests {
         assert!(response.is_some());
         assert_eq!(response.unwrap(), "response");
     }
+
+    #[test]
+    fn doesnt_find_response() {
+        // ARRANGE
+        let response_vector = vec![
+            ChatResponse {
+                key: String::from("key"),
+                response: String::from("response")
+            }
+        ];
+
+        // ACT
+        let response = find_response(&response_vector, "this doesnt contsain it");
+
+        // ASSERT
+        assert!(response.is_none());
+    }
 }
