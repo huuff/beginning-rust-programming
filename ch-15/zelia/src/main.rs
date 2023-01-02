@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{self, Read, BufRead};
+use std::io::{self, Read, BufRead, BufReader};
 use std::error::Error;
 
 struct ChatResponse {
@@ -7,13 +7,10 @@ struct ChatResponse {
     response: String,
 }
 
-fn main() -> Result<(), Box<dyn Error>>{
-    let filename = "chatresponses.txt";
+fn load_responses(input: Box<dyn BufRead>) -> Result<Vec<ChatResponse>, Box<dyn Error>> {
     let mut response_vector = vec![];
-    
-    let file = File::open(filename)?;
-    let lines = io::BufReader::new(file).lines();
-    for line in lines {
+
+    for line in input.lines() {
         let line = line?;
         let mut split_line = line.as_str().split('\t');
         let r = ChatResponse {
@@ -22,6 +19,14 @@ fn main() -> Result<(), Box<dyn Error>>{
         };
         response_vector.push(r);
     }
+
+    Ok(response_vector)
+}
+
+fn main() -> Result<(), Box<dyn Error>>{
+    let filename = "chatresponses.txt";
+    let file = BufReader::new(File::open(filename)?);
+    let response_vector = load_responses(Box::new(file))?;
 
     println!("Hi, my name is Zelia, what can I do for you?");
 
