@@ -1,7 +1,8 @@
 use std::fs::File;
-use std::io::{self, Read, BufRead, BufReader};
+use std::io::{self, BufRead, BufReader};
 use std::error::Error;
 
+#[derive(Eq, PartialEq, Debug)]
 struct ChatResponse {
     key: String,
     response: String,
@@ -12,7 +13,7 @@ fn load_responses(input: Box<dyn BufRead>) -> Result<Vec<ChatResponse>, Box<dyn 
 
     for line in input.lines() {
         let line = line?;
-        let mut split_line = line.as_str().split('\t');
+        let mut split_line = line.as_str().split(',');
         let r = ChatResponse {
             key: String::from(split_line.next().unwrap()),
             response: String::from(split_line.next().unwrap()),
@@ -56,4 +57,30 @@ fn main() -> Result<(), Box<dyn Error>>{
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use indoc::indoc;
+
+    #[test]
+    fn correctly_load_responses() -> Result<(), Box<dyn Error>>{
+        // ARRANGE
+        let input = BufReader::new(indoc! {r#"
+            firstkey,firstresponse
+            secondkey,secondresponse
+        "#}.trim().as_bytes());
+
+        // ACT
+        let response_vector = load_responses(Box::new(input))?;
+
+        // ASSERT
+        assert_eq!(response_vector[0], ChatResponse {
+            key: String::from("firstkey"),
+            response: String::from("firstresponse"),
+        });
+        
+        Ok(())
+    }
 }
