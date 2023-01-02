@@ -24,6 +24,16 @@ fn load_responses(input: Box<dyn BufRead>) -> Result<Vec<ChatResponse>, Box<dyn 
     Ok(response_vector)
 }
 
+fn find_response<'a>(response_vector: &'a Vec<ChatResponse>, input: &str) -> Option<&'a str> {
+    for resp in response_vector {
+        if input.contains(resp.key.as_str()) {
+            return Some(resp.response.as_str());
+        }
+    }
+
+    None
+}
+
 fn main() -> Result<(), Box<dyn Error>>{
     let filename = "chatresponses.txt";
     let file = BufReader::new(File::open(filename)?);
@@ -33,7 +43,6 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     loop {
         let mut query_input = String::new();
-        let mut found = false;
 
         io::stdin().read_line(&mut query_input)?;
         query_input = query_input.trim().to_string();
@@ -43,17 +52,12 @@ fn main() -> Result<(), Box<dyn Error>>{
             break;
         }
 
-        for resp in &response_vector {
-            if query_input.contains(resp.key.as_str()) {
-                found = true;
-                println!("{}", resp.response);
-                break;
-            }
-        }
-
-        if !found {
+        if let Some(response) = find_response(&response_vector, &query_input) {
+            println!("{}", response);
+        } else {
             println!("I'm not sure what you are saying");
         }
+
     }
 
     Ok(())
